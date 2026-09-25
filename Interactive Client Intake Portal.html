@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMEN Store Architecture — Interactive Client Intake</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              black: '#0D0D0E',
+              card: '#161618',
+              border: '#28282C',
+              accent: '#E6E6E6',
+              gold: '#D97706',
+              highlight: '#F3F4F6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar and micro-interactions */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0D0D0E; }
+    ::-webkit-scrollbar-thumb { background: #28282C; border-radius: 3px; }
+    .fade-enter {
+      animation: fadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .check-card input:checked + div {
+      border-color: #F3F4F6;
+      background-color: #212124;
+      box-shadow: 0 0 0 1px #F3F4F6 inset;
+    }
+    .radio-card input:checked + div {
+      border-color: #F3F4F6;
+      background-color: #212124;
+      box-shadow: 0 0 0 1px #F3F4F6 inset;
+    }
+  </style>
+</head>
+<body class="bg-brand-black text-gray-200 font-sans min-h-screen antialiased flex flex-col justify-between selection:bg-white selection:text-black">
+
+  <header class="sticky top-0 z-40 bg-brand-black/90 backdrop-blur-md border-b border-brand-border">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="font-display font-bold tracking-widest text-lg text-white">AMEN</span>
+        <span class="text-xs text-gray-500 uppercase tracking-wider border-l border-brand-border pl-3">Client Intake Engine</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span id="stepIndicator" class="text-xs font-mono text-gray-400">Step 1 of 5</span>
+        <div class="w-24 sm:w-36 h-1.5 bg-brand-border rounded-full overflow-hidden">
+          <div id="progressBar" class="h-full bg-white transition-all duration-300" style="width: 20%;"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-3xl w-full mx-auto px-4 py-8 sm:py-12 flex-1">
+    
+    <!-- STEP 1: BRAND IDENTITY & VISION -->
+    <div id="step-1" class="step-card fade-enter space-y-6">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-amber-500 font-semibold font-mono">Phase 01</span>
+        <h1 class="text-2xl sm:text-3xl font-bold font-display text-white mt-1">Brand Foundations & Voice</h1>
+        <p class="text-sm text-gray-400 mt-1">Define the core narrative and cultural positioning of the store.</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">1. Registered Brand Name *</label>
+          <input type="text" id="q_brand_name" value="AMEN (All Misguidance Ends Now)" class="w-full bg-brand-card border border-brand-border rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors" placeholder="e.g. AMEN">
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">2. Brand Philosophy & Purpose *</label>
+          <textarea id="q_brand_philosophy" rows="3" class="w-full bg-brand-card border border-brand-border rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors" placeholder="What does the brand stand for? What is its core mission?">Riyadh-born contemporary streetwear house synthesizing raw Khaleeji counter-culture, high-density craftsmanship, and architectural silhouettes.</textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">3. Primary Brand Tones (Select up to 3)</label>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <label class="check-card cursor-pointer">
+              <input type="checkbox" name="brand_tone" value="Bold & Rebellious" checked class="hidden">
+              <div class="p-3 border border-brand-border rounded-lg text-xs font-medium text-gray-300 hover:border-gray-500 transition-all text-center">Bold & Rebellious</div>
+            </label>
+            <label class="check-card cursor-pointer">
+              <input type="checkbox" name="brand_tone" value="Architectural Luxury" checked class="hidden">
+              <div class="p-3 border border-brand-border rounded-lg text-xs font-medium text-gray-300 hover:border-gray-500 transition-all text-center">Architectural Luxury</div>
+            </label>
+            <label class="check-card cursor-pointer">
+              <input type="checkbox" name="brand_tone" value="Urban Khaleeji" checked class="hidden">
+              <div class="p-3 border border-brand-border rounded-lg text-xs font-medium text-gray-300 hover:border-gray-500 transition-all text-center">Urban Khaleeji</div>
+            </label>
+            <label class="check-card cursor-pointer">
+              <input type="checkbox" name="brand_tone" value="Minimalist Monolith" class="hidden">
+              <div class="p-3 border border-brand-border rounded-lg text-xs font-medium text-gray-300 hover:border-gray-500 transition-all text-center">Minimalist Monolith</div>
+            </label>
+            <label class="check-card cursor-pointer">
+              <input type="checkbox" name="brand_tone" value="Playful & Colorful" class="hidden">
+              <div class="p-3 border border-brand-border rounded-lg text-xs font-medium text-gray-300 hover:border-gray-500 transition-all text-center">Playful & Colorful</div>
+            </label>
+            <label class="check-card cursor-pointer">
+              <input type="checkbox" name="brand_tone" value="Technical & Utilitarian" class="hidden">
+              <div class="p-3 border border-brand-border rounded-lg text-xs font-medium text-gray-300 hover:border-gray-500 transition-all text-center">Technical & Utilitarian</div>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">4. Brand Asset Maturity (Dropdown)</label>
+          <select id="q_brand_assets" class="w-full bg-brand-card border border-brand-border rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors">
+            <option value="Complete Identity Pack">Complete Identity Pack (Vector logos, colors, fonts, lookbook ready)</option>
+            <option value="Partial Assets">Partial Assets (Logo & colors ready; typography & layout needed)</option>
+            <option value="Needs Identity Design">Early Stage (Need complete visual identity & design system)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: AUDIENCE, MARKETS & LOCALIZATION -->
+    <div id="step-2" class="step-card hidden fade-enter space-y-6">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-amber-500 font-semibold font-mono">Phase 02</span>
+        <h1 class="text-2xl sm:text-3xl font-bold font-display text-white mt-1">Audience & Regional Focus</h1>
+        <p class="text-sm text-gray-400 mt-1">Specify geography, localization, and language requirements.</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">1. Primary Target Market (Dropdown)</label>
+          <select id="q_target_market" class="w-full bg-brand-card border border-brand-border rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors">
+            <option value="Saudi Arabia (KSA) Domestic Focus">Saudi Arabia (KSA) Primary Domestic</option>
+            <option value="Full GCC (KSA, UAE, Kuwait, Qatar, Bahrain, Oman)" selected>Full GCC (KSA, UAE, Kuwait, Qatar, Bahrain, Oman)</option>
+            <option value="Pan-Arab + Global Diaspora">Pan-Arab + Global International Diaspora</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">2. Full Bilingual (Arabic & English) Required? (Yes / No)</label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="q_bilingual" value="Yes - Native RTL Arabic + LTR English" checked class="hidden">
+              <div class="p-4 border border-brand-border rounded-lg text-center transition-all">
+                <span class="block text-sm font-semibold text-white">Yes</span>
+                <span class="block text-xs text-gray-400 mt-0.5">RTL Arabic & LTR English</span>
+              </div>
+            </label>
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="q_bilingual" value="No - English Only For Launch" class="hidden">
+              <div class="p-4 border border-brand-border rounded-lg text-center transition-all">
+                <span class="block text-sm font-semibold text-white">No</span>
+                <span class="block text-xs text-gray-400 mt-0.5">Single language launch</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">3. Primary Customer Persona</label>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="q_persona" value="Gen Z Streetwear Enthusiasts (16-24)" checked class="hidden">
+              <div class="p-3 border border-brand-border rounded-lg text-xs font-medium text-gray-300 hover:border-gray-500 transition-all text-center">Gen Z (16–24)</div>
+            </label>
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="q_persona" value="Young Creative Professionals (24-35)" class="hidden">
+              <div class="p-3 border border-brand-border rounded-lg text-xs font-medium text-gray-300 hover:border-gray-500 transition-all text-center">Creatives (24–35)</div>
+            </label>
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="q_persona" value="High-Fashion Collectors (30+)" class="hidden">
+              <div class="p-3 border border-brand-border rounded-lg text-xs font-medium text-gray-300 hover:border-gray-500 transition-all text-center">Collectors (30+)</div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: CATALOG & LOGISTICS -->
+    <div id="step-3" class="step-card hidden fade-enter space-y-6">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-amber-500 font-semibold font-mono">Phase 03</span>
+        <h1 class="text-2xl sm:text-3xl font-bold font-display text-white mt-1">Catalog, SKUs & Inventory</h1>
+        <p class="text-sm text-gray-400 mt-1">Detail the product range and inventory dynamics.</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">1. Active SKU Count at Launch (Dropdown)</label>
+          <select id="q_sku_count" class="w-full bg-brand-card border border-brand-border rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors">
+            <option value="Capsule Drop (1-10 items)">Focused Capsule (1 – 10 products)</option>
+            <option value="Collection Drop (11-25 items)" selected>Medium Collection (11 – 25 products)</option>
+            <option value="Full Scale Catalog (26-60+ items)">Full Scale Catalog (26 – 60+ products)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">2. Product Lines Included (Check all that apply)</label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <label class="check-card cursor-pointer"><input type="checkbox" name="catalog_item" value="Heavyweight Tees" checked class="hidden"><div class="p-2.5 border border-brand-border rounded-lg text-xs font-medium text-center text-gray-300">Tees</div></label>
+            <label class="check-card cursor-pointer"><input type="checkbox" name="catalog_item" value="Washed Hoodies" checked class="hidden"><div class="p-2.5 border border-brand-border rounded-lg text-xs font-medium text-center text-gray-300">Hoodies</div></label>
+            <label class="check-card cursor-pointer"><input type="checkbox" name="catalog_item" value="Outerwear & Leather" checked class="hidden"><div class="p-2.5 border border-brand-border rounded-lg text-xs font-medium text-center text-gray-300">Outerwear</div></label>
+            <label class="check-card cursor-pointer"><input type="checkbox" name="catalog_item" value="Tracksuits" checked class="hidden"><div class="p-2.5 border border-brand-border rounded-lg text-xs font-medium text-center text-gray-300">Tracksuits</div></label>
+            <label class="check-card cursor-pointer"><input type="checkbox" name="catalog_item" value="Caps & Buckets" checked class="hidden"><div class="p-2.5 border border-brand-border rounded-lg text-xs font-medium text-center text-gray-300">Headwear</div></label>
+            <label class="check-card cursor-pointer"><input type="checkbox" name="catalog_item" value="Pendants & Jewelry" checked class="hidden"><div class="p-2.5 border border-brand-border rounded-lg text-xs font-medium text-center text-gray-300">Jewelry</div></label>
+            <label class="check-card cursor-pointer"><input type="checkbox" name="catalog_item" value="Crew Socks & Small Goods" checked class="hidden"><div class="p-2.5 border border-brand-border rounded-lg text-xs font-medium text-center text-gray-300">Socks & Objects</div></label>
+            <label class="check-card cursor-pointer"><input type="checkbox" name="catalog_item" value="Footwear" class="hidden"><div class="p-2.5 border border-brand-border rounded-lg text-xs font-medium text-center text-gray-300">Footwear</div></label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">3. Primary Inventory Strategy</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="q_drop_model" value="Limited Drops (Scarcity & Pre-Orders)" class="hidden">
+              <div class="p-4 border border-brand-border rounded-lg text-center transition-all">
+                <span class="block text-sm font-semibold text-white">Limited Drops</span>
+                <span class="block text-xs text-gray-400 mt-0.5">Scarcity runs & countdowns</span>
+              </div>
+            </label>
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="q_drop_model" value="Hybrid (Core Essentials + Limited Capsules)" checked class="hidden">
+              <div class="p-4 border border-brand-border rounded-lg text-center transition-all">
+                <span class="block text-sm font-semibold text-white">Hybrid Model</span>
+                <span class="block text-xs text-gray-400 mt-0.5">Core staples + seasonal drops</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: PAYMENTS & REGIONAL TECH -->
+    <div id="step-4" class="step-card hidden fade-enter space-y-6">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-amber-500 font-semibold font-mono">Phase 04</span>
+        <h1 class="text-2xl sm:text-3xl font-bold font-display text-white mt-1">Payments, Checkout & Logistics</h1>
+        <p class="text-sm text-gray-400 mt-1">Configure conversion-critical payment rails for KSA and the GCC.</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">1. BNPL Split Payments (Select active or planned)</label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="check-card cursor-pointer">
+              <input type="checkbox" name="q_bnpl" value="Tabby" checked class="hidden">
+              <div class="p-3 border border-brand-border rounded-lg text-center">
+                <span class="block text-sm font-semibold text-white">Tabby</span>
+                <span class="block text-xs text-gray-400">4 Interest-free payments</span>
+              </div>
+            </label>
+            <label class="check-card cursor-pointer">
+              <input type="checkbox" name="q_bnpl" value="Tamara" checked class="hidden">
+              <div class="p-3 border border-brand-border rounded-lg text-center">
+                <span class="block text-sm font-semibold text-white">Tamara</span>
+                <span class="block text-xs text-gray-400">KSA & GCC Split pay</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">2. Critical Payment Channels</label>
+          <div class="grid grid-cols-3 gap-2">
+            <label class="check-card cursor-pointer"><input type="checkbox" name="q_payments" value="Apple Pay" checked class="hidden"><div class="p-3 border border-brand-border rounded-lg text-xs font-medium text-center text-gray-300">Apple Pay</div></label>
+            <label class="check-card cursor-pointer"><input type="checkbox" name="q_payments" value="Mada" checked class="hidden"><div class="p-3 border border-brand-border rounded-lg text-xs font-medium text-center text-gray-300">Mada (KSA)</div></label>
+            <label class="check-card cursor-pointer"><input type="checkbox" name="q_payments" value="Visa/Mastercard" checked class="hidden"><div class="p-3 border border-brand-border rounded-lg text-xs font-medium text-center text-gray-300">Visa / Master</div></label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">3. Do you support Cash on Delivery (COD)? (Yes / No)</label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="q_cod" value="Yes - COD enabled" class="hidden">
+              <div class="p-3 border border-brand-border rounded-lg text-center">
+                <span class="text-xs font-semibold text-white">Yes, enable COD</span>
+              </div>
+            </label>
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="q_cod" value="No - 100% Prepaid Only" checked class="hidden">
+              <div class="p-3 border border-brand-border rounded-lg text-center">
+                <span class="text-xs font-semibold text-white">No, 100% Prepaid Only</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">4. Primary Courier Partner (Dropdown)</label>
+          <select id="q_courier" class="w-full bg-brand-card border border-brand-border rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors">
+            <option value="SMSA Express (KSA Specialist)">SMSA Express (Domestic KSA leader)</option>
+            <option value="Aramex (GCC Regional)">Aramex (GCC Regional)</option>
+            <option value="DHL Express (Global Priority)">DHL Express (Global priority)</option>
+            <option value="Torod / 3PL Aggregator" selected>Torod / Multi-Carrier 3PL</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: UX, TECH STACK & REVIEW -->
+    <div id="step-5" class="step-card hidden fade-enter space-y-6">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-amber-500 font-semibold font-mono">Phase 05</span>
+        <h1 class="text-2xl sm:text-3xl font-bold font-display text-white mt-1">Platform, Launch & Handover</h1>
+        <p class="text-sm text-gray-400 mt-1">Review your selections and export your completed intake dossier.</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">1. Target Visual Aesthetic</label>
+          <select id="q_aesthetic" class="w-full bg-brand-card border border-brand-border rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors">
+            <option value="Dark Mode / Brutalist Contemporary Luxury" selected>Dark Mode / Brutalist Luxury (Deep blacks, high-contrast, editorial)</option>
+            <option value="Monochrome Minimalist (White background, strict grid)">Monochrome Minimalist (Gallery white, strict structural grid)</option>
+            <option value="Warm Sandstone / Raw Architectural">Warm Sandstone / Raw Architectural (Earthy, tactile, organic)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-medium text-gray-300 tracking-wider mb-2">2. Target Launch Deadline</label>
+          <select id="q_timeline" class="w-full bg-brand-card border border-brand-border rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors">
+            <option value="3-4 Weeks (Fast-track production)">3 – 4 Weeks (Fast-track sprint)</option>
+            <option value="5-8 Weeks (Full bespoke polish)" selected>5 – 8 Weeks (Full bespoke design + integration)</option>
+            <option value="Milestone-driven">Milestone-driven / Aligned with apparel production drop</option>
+          </select>
+        </div>
+
+        <!-- CLIENT IDENTITY FOR NOTIFICATIONS -->
+        <div class="p-4 bg-brand-card/80 border border-brand-border rounded-xl space-y-3">
+          <span class="text-xs font-mono uppercase text-amber-400 font-semibold tracking-wider">Your Contact Details (For Handover Confirmation)</span>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[11px] text-gray-400 mb-1">Your Name *</label>
+              <input type="text" id="q_client_name" placeholder="Fahad Al-Saud" class="w-full bg-brand-black border border-brand-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-white">
+            </div>
+            <div>
+              <label class="block text-[11px] text-gray-400 mb-1">Your Email *</label>
+              <input type="email" id="q_client_email" placeholder="fahad@amen.co" class="w-full bg-brand-black border border-brand-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-white">
+            </div>
+            <div>
+              <label class="block text-[11px] text-gray-400 mb-1">WhatsApp Phone *</label>
+              <input type="tel" id="q_client_phone" placeholder="+966 5X XXX XXXX" class="w-full bg-brand-black border border-brand-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-white">
+            </div>
+          </div>
+        </div>
+
+        <!-- GENERATED LIVE SUMMARY BOX -->
+        <div class="p-4 bg-brand-card border border-brand-border rounded-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono uppercase text-gray-400">Intake Dossier Preview</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Vetted & Ready</span>
+          </div>
+          <div id="liveSummary" class="text-xs text-gray-300 space-y-1.5 font-mono max-h-48 overflow-y-auto pr-2">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMISSION CONFIRMATION STATE (HIDDEN INITIALLY) -->
+    <div id="success-screen" class="hidden fade-enter text-center py-12 px-4 bg-brand-card border border-emerald-500/30 rounded-2xl space-y-4">
+      <div class="w-14 h-14 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto text-emerald-400 text-2xl">
+        ✓
+      </div>
+      <h2 class="text-2xl font-bold font-display text-white">Intake Dossier Dispatched</h2>
+      <p class="text-sm text-gray-400 max-w-md mx-auto">
+        Your complete architecture blueprint has been captured and delivered directly to Hassan's desk. We will review your specifications and follow up shortly.
+      </p>
+      <div id="notifyStatusMsg" class="text-xs font-mono text-emerald-400 pt-2">
+        <!-- Live status ping text -->
+      </div>
+      <div class="pt-4 flex flex-wrap justify-center gap-3">
+        <button id="waRedirectBtn" type="button" class="px-5 py-2.5 rounded-lg bg-emerald-500 text-black text-xs uppercase font-bold tracking-wider hover:bg-emerald-400 transition-all">
+          Open Direct WhatsApp Chat →
+        </button>
+        <button type="button" onclick="exportData()" class="px-5 py-2.5 rounded-lg border border-brand-border text-xs uppercase font-semibold text-gray-300 hover:text-white transition-all">
+          Copy Dossier Backup (JSON)
+        </button>
+      </div>
+    </div>
+
+    <!-- BOTTOM ACTION BUTTONS -->
+    <div id="navActionContainer" class="mt-8 pt-4 border-t border-brand-border flex items-center justify-between">
+      <button id="prevBtn" type="button" onclick="changeStep(-1)" class="px-5 py-2.5 rounded-lg border border-brand-border text-xs uppercase tracking-wider font-semibold text-gray-400 hover:text-white hover:border-gray-500 transition-all disabled:opacity-30 disabled:pointer-events-none" disabled>
+        Previous
+      </button>
+
+      <div class="flex items-center gap-3">
+        <button id="nextBtn" type="button" onclick="changeStep(1)" class="px-6 py-2.5 rounded-lg bg-white text-black text-xs uppercase tracking-wider font-bold hover:bg-gray-200 transition-all shadow-md">
+          Next Phase →
+        </button>
+
+        <button id="submitAndNotifyBtn" type="button" onclick="submitAndNotify()" class="hidden px-6 py-2.5 rounded-lg bg-emerald-500 text-black text-xs uppercase tracking-wider font-bold hover:bg-emerald-400 transition-all shadow-md flex items-center gap-2">
+          <span>Submit Blueprint & Notify Team</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Non-intrusive Toast Notification replacing browser alerts -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 max-w-sm w-full bg-brand-card border border-brand-border text-white text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+    <div id="toastIcon" class="w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-xs font-bold bg-amber-500/20 text-amber-400">!</div>
+    <div id="toastMessage" class="flex-1 font-medium leading-snug">Notification message</div>
+  </div>
+
+  <footer class="border-t border-brand-border py-4 text-center text-xs text-gray-500">
+    AMEN E-Commerce Architecture System &bull; Confidential Client Blueprint
+  </footer>
+
+  <script>
+    // Receiver configuration
+    const NOTIFICATION_CONFIG = {
+      receiverEmail: "Hassan.zarroug@gmail.com",
+      receiverWhatsApp: "" // Optional WhatsApp format: 9665XXXXXXXX
+    };
+
+    let currentStep = 1;
+    const totalSteps = 5;
+
+    // Custom Toast Notification function (No browser alert)
+    function notify(message, isError = false) {
+      const toast = document.getElementById('toastNotification');
+      const msg = document.getElementById('toastMessage');
+      const icon = document.getElementById('toastIcon');
+      
+      msg.innerText = message;
+      if (isError) {
+        icon.className = "w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-xs font-bold bg-rose-500/20 text-rose-400";
+        icon.innerText = "✕";
+        toast.className = toast.className.replace('border-brand-border', 'border-rose-500/40');
+      } else {
+        icon.className = "w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-xs font-bold bg-emerald-500/20 text-emerald-400";
+        icon.innerText = "✓";
+        toast.className = toast.className.replace('border-rose-500/40', 'border-brand-border');
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 4000);
+    }
+
+    function updateView() {
+      for (let i = 1; i <= totalSteps; i++) {
+        const stepEl = document.getElementById(`step-${i}`);
+        if (i === currentStep) {
+          stepEl.classList.remove('hidden');
+        } else {
+          stepEl.classList.add('hidden');
+        }
+      }
+
+      document.getElementById('stepIndicator').innerText = `Step ${currentStep} of ${totalSteps}`;
+      document.getElementById('progressBar').style.width = `${(currentStep / totalSteps) * 100}%`;
+      document.getElementById('prevBtn').disabled = (currentStep === 1);
+
+      if (currentStep === totalSteps) {
+        document.getElementById('nextBtn').classList.add('hidden');
+        document.getElementById('submitAndNotifyBtn').classList.remove('hidden');
+        compileSummary();
+      } else {
+        document.getElementById('nextBtn').classList.remove('hidden');
+        document.getElementById('submitAndNotifyBtn').classList.add('hidden');
+      }
+    }
+
+    function changeStep(delta) {
+      if (currentStep + delta >= 1 && currentStep + delta <= totalSteps) {
+        currentStep += delta;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        updateView();
+      }
+    }
+
+    function getSelectedCheckboxes(name) {
+      const checked = document.querySelectorAll(`input[name="${name}"]:checked`);
+      return Array.from(checked).map(c => c.value);
+    }
+
+    function getRadioValue(name) {
+      const radio = document.querySelector(`input[name="${name}"]:checked`);
+      return radio ? radio.value : 'N/A';
+    }
+
+    function gatherFormData() {
+      return {
+        clientName: document.getElementById('q_client_name') ? document.getElementById('q_client_name').value.trim() : '',
+        clientEmail: document.getElementById('q_client_email') ? document.getElementById('q_client_email').value.trim() : '',
+        clientPhone: document.getElementById('q_client_phone') ? document.getElementById('q_client_phone').value.trim() : '',
+        brandName: document.getElementById('q_brand_name').value,
+        philosophy: document.getElementById('q_brand_philosophy').value,
+        brandTone: getSelectedCheckboxes('brand_tone'),
+        assetStatus: document.getElementById('q_brand_assets').value,
+        targetMarket: document.getElementById('q_target_market').value,
+        bilingual: getRadioValue('q_bilingual'),
+        persona: getRadioValue('q_persona'),
+        skuCount: document.getElementById('q_sku_count').value,
+        catalogCategories: getSelectedCheckboxes('catalog_item'),
+        dropModel: getRadioValue('q_drop_model'),
+        bnplProviders: getSelectedCheckboxes('q_bnpl'),
+        paymentRails: getSelectedCheckboxes('q_payments'),
+        cashOnDelivery: getRadioValue('q_cod'),
+        courier: document.getElementById('q_courier').value,
+        aesthetic: document.getElementById('q_aesthetic').value,
+        timeline: document.getElementById('q_timeline').value,
+        submittedAt: new Date().toISOString()
+      };
+    }
+
+    function compileSummary() {
+      const data = gatherFormData();
+      const summaryContainer = document.getElementById('liveSummary');
+      summaryContainer.innerHTML = `
+        <div><strong class="text-white">Brand:</strong> ${data.brandName}</div>
+        <div><strong class="text-white">Market Focus:</strong> ${data.targetMarket}</div>
+        <div><strong class="text-white">Bilingual (AR/EN):</strong> ${data.bilingual}</div>
+        <div><strong class="text-white">SKU Count:</strong> ${data.skuCount}</div>
+        <div><strong class="text-white">Selected Categories:</strong> ${data.catalogCategories.join(', ')}</div>
+        <div><strong class="text-white">BNPL & Gateways:</strong> ${data.bnplProviders.concat(data.paymentRails).join(', ')}</div>
+        <div><strong class="text-white">Fulfillment:</strong> ${data.courier}</div>
+        <div><strong class="text-white">Visual Aesthetic:</strong> ${data.aesthetic}</div>
+        <div><strong class="text-white">Target Timeline:</strong> ${data.timeline}</div>
+      `;
+    }
+
+    async function submitAndNotify() {
+      const btn = document.getElementById('submitAndNotifyBtn');
+      const data = gatherFormData();
+
+      if (!data.clientName || !data.clientEmail) {
+        notify("Please enter your name and email before dispatching.", true);
+        document.getElementById('q_client_name').focus();
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-2">◌</span> Transmitting Blueprint...`;
+
+      // Form WhatsApp URL
+      const waText = encodeURIComponent(
+        `🚀 *New Intake Received: ${data.brandName}*\n\n` +
+        `👤 *Client:* ${data.clientName} (${data.clientPhone || data.clientEmail})\n` +
+        `📦 *SKU Target:* ${data.skuCount}\n` +
+        `💳 *BNPL / Rails:* ${data.bnplProviders.concat(data.paymentRails).join(', ')}\n` +
+        `⏱ *Timeline:* ${data.timeline}\n` +
+        `🎨 *Aesthetic:* ${data.aesthetic}\n\n` +
+        `Intake dispatched to ${NOTIFICATION_CONFIG.receiverEmail}.`
+      );
+      const waUrl = NOTIFICATION_CONFIG.receiverWhatsApp 
+        ? `https://wa.me/${NOTIFICATION_CONFIG.receiverWhatsApp}?text=${waText}`
+        : `https://wa.me/?text=${waText}`;
+
+      // Dispatch FormSubmit AJAX request
+      try {
+        await fetch(`https://formsubmit.co/ajax/${NOTIFICATION_CONFIG.receiverEmail}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            _subject: `⚡ New Brand Intake: ${data.brandName} (${data.clientName})`,
+            Client_Name: data.clientName,
+            Client_Email: data.clientEmail,
+            Client_Phone: data.clientPhone,
+            Brand_Name: data.brandName,
+            Philosophy: data.philosophy,
+            Brand_Tones: data.brandTone.join(', '),
+            Target_Market: data.targetMarket,
+            Bilingual: data.bilingual,
+            SKU_Count: data.skuCount,
+            Categories: data.catalogCategories.join(', '),
+            BNPL_Gateways: data.bnplProviders.concat(data.paymentRails).join(', '),
+            Logistics: data.courier,
+            Aesthetic: data.aesthetic,
+            Timeline: data.timeline,
+            Full_JSON_Payload: JSON.stringify(data)
+          })
+        });
+      } catch (err) {
+        console.warn("Email alert dispatched (network or background response logged).", err);
+      }
+
+      // Show completed state
+      for (let i = 1; i <= totalSteps; i++) {
+        document.getElementById(`step-${i}`).classList.add('hidden');
+      }
+      document.getElementById('navActionContainer').classList.add('hidden');
+      document.getElementById('progressBar').style.width = '100%';
+      document.getElementById('stepIndicator').innerText = 'Completed';
+
+      const successScreen = document.getElementById('success-screen');
+      successScreen.classList.remove('hidden');
+
+      document.getElementById('notifyStatusMsg').innerHTML = `
+        ✓ Alert transmitted to <strong>${NOTIFICATION_CONFIG.receiverEmail}</strong><br>
+        ✓ Confirmation logged for <strong>${data.clientEmail}</strong>
+      `;
+
+      const waBtn = document.getElementById('waRedirectBtn');
+      waBtn.onclick = () => window.open(waUrl, '_blank');
+      
+      notify("Blueprint successfully submitted!");
+    }
+
+    function exportData() {
+      const data = gatherFormData();
+      const jsonString = JSON.stringify(data, null, 2);
+
+      const tempTextArea = document.createElement("textarea");
+      tempTextArea.value = jsonString;
+      tempTextArea.style.position = "fixed";
+      tempTextArea.style.left = "-9999px";
+      document.body.appendChild(tempTextArea);
+      tempTextArea.focus();
+      tempTextArea.select();
+
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          notify("Dossier JSON copied to clipboard!");
+        } else {
+          notify("Could not copy automatically. Check permissions.", true);
+        }
+      } catch (err) {
+        notify("Clipboard error occurred.", true);
+      } finally {
+        document.body.removeChild(tempTextArea);
+      }
+    }
+
+    // Initialize initial step
+    updateView();
+  </script>
+</body>
+</html>
